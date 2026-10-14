@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="820" viewBox="0 0 1240 820" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/>
+    </marker>
+  </defs>
+  <style>
+    .title { font-size: 22px; font-weight: 700; fill: #111827; }
+    .subtitle { font-size: 13px; fill: #4b5563; }
+    .h { font-size: 14px; font-weight: 700; fill: #111827; }
+    .t { font-size: 12px; fill: #1f2937; }
+    .s { font-size: 11px; fill: #4b5563; }
+    .mono { font-family: Consolas, Menlo, monospace; font-size: 11px; fill: #1f2937; }
+    .lbl { font-size: 11px; fill: #1d4ed8; font-weight: 600; }
+    .box { fill: #ffffff; stroke: #9ca3af; stroke-width: 1.2; rx: 8; }
+    .agent { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.5; rx: 8; }
+    .workflow { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 1.5; rx: 10; stroke-dasharray: 6 4; }
+    .runtime { fill: #f9fafb; stroke: #6b7280; stroke-width: 1.5; rx: 14; }
+    .ext { fill: #ecfdf5; stroke: #059669; stroke-width: 1.4; rx: 8; }
+    .guard { fill: #fff7ed; stroke: #ea580c; stroke-width: 1.4; rx: 8; }
+    .state { fill: #fefce8; stroke: #ca8a04; stroke-width: 1.2; rx: 6; }
+    .line { stroke: #374151; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+    .lineBlue { stroke: #1d4ed8; stroke-width: 1.4; fill: none; marker-end: url(#arrowBlue); }
+    .lineExt { stroke: #059669; stroke-width: 1.2; fill: none; stroke-dasharray: 4 3; marker-end: url(#arrow); }
+  </style>
+
+  <!-- Title -->
+  <text x="24" y="34" class="title">ReadyNow! — FEMA Emergency Preparedness Assistant</text>
+  <text x="24" y="54" class="subtitle">Google ADK multi-agent system · Challenge 6 capstone · deployed to Agent Runtime (Agent Platform)</text>
+
+  <!-- Clients -->
+  <rect x="24" y="84" width="200" height="118" class="box"/>
+  <text x="40" y="108" class="h">Users &amp; clients</text>
+  <text x="40" y="130" class="t">• Colab Enterprise notebook</text>
+  <text x="40" y="148" class="t">• Agent Platform Playground</text>
+  <text x="40" y="166" class="t">• REST / SDK clients</text>
+  <text x="40" y="190" class="s">async_stream_query(user_id, message)</text>
+
+  <!-- Agent Runtime container -->
+  <rect x="252" y="84" width="964" height="540" class="runtime"/>
+  <text x="270" y="108" class="h">Agent Runtime (Agent Platform, us-central1)</text>
+  <text x="270" y="126" class="s">managed sessions &amp; state · Cloud Logging · deployed from the notebook with client.agent_engines.create(AdkApp)</text>
+
+  <!-- Root agent -->
+  <rect x="300" y="146" width="420" height="88" class="agent"/>
+  <text x="316" y="168" class="h">readynow_root</text>
+  <text x="430" y="168" class="s">LlmAgent · Gemini 3.8 Flash</text>
+  <text x="316" y="188" class="t">Describes what it can do · coordinates the team</text>
+  <text x="316" y="206" class="t">Greeting / "what can you do?" → answers itself</text>
+  <text x="316" y="224" class="t">Any real request → transfer_to_agent(answer_team)</text>
+
+  <!-- Guardrail box -->
+  <rect x="760" y="146" width="436" height="88" class="guard"/>
+  <text x="776" y="168" class="h">Callbacks on every agent (8 agents)</text>
+  <text x="776" y="188" class="t">before_model: validate input → OK / OFF_TOPIC / BAD (Gemini 3.5 Flash-Lite classifier)</text>
+  <text x="776" y="206" class="t">before_model: log USER » and CHECK » · after_model: log MODEL » (text or tool call)</text>
+  <text x="776" y="224" class="s">OFF_TOPIC / BAD return a canned LlmResponse → the model never runs. Verdict cached per turn in state.</text>
+
+  <!-- Arrow client -> root -->
+  <path d="M224,143 L300,185" class="line"/>
+
+  <!-- Workflow container -->
+  <rect x="300" y="262" width="896" height="150" class="workflow"/>
+  <text x="316" y="284" class="h">answer_team</text>
+  <text x="420" y="284" class="s">SequentialAgent · validates and refines every answer</text>
+  <path d="M510,234 L510,262" class="line"/>
+  <text x="520" y="252" class="lbl">transfer_to_agent</text>
+
+  <!-- Steps -->
+  <rect x="320" y="300" width="260" height="92" class="agent"/>
+  <text x="336" y="322" class="h">1 · responder (Search)</text>
+  <text x="336" y="342" class="t">Calls the specialists as tools,</text>
+  <text x="336" y="358" class="t">writes the first draft</text>
+  <text x="336" y="380" class="mono">output_key = "draft"</text>
+
+  <rect x="614" y="300" width="260" height="92" class="agent"/>
+  <text x="630" y="322" class="h">2 · critic (Validate)</text>
+  <text x="630" y="342" class="t">Reads {draft}; lists missing safety</text>
+  <text x="630" y="358" class="t">info, unsupported claims, clarity</text>
+  <text x="630" y="380" class="mono">output_key = "critique"</text>
+
+  <rect x="908" y="300" width="268" height="92" class="agent"/>
+  <text x="924" y="322" class="h">3 · refiner (Refine)</text>
+  <text x="924" y="342" class="t">Reads {draft} + {critique}; writes</text>
+  <text x="924" y="358" class="t">the plain-language final answer</text>
+  <text x="924" y="380" class="mono">output_key = "final_answer"</text>
+
+  <path d="M580,346 L614,346" class="lineBlue"/>
+  <path d="M874,346 L908,346" class="lineBlue"/>
+
+  <!-- Session state bar -->
+  <rect x="300" y="424" width="896" height="30" class="state"/>
+  <text x="316" y="444" class="mono">session state:  draft  →  critique  →  final_answer      (steps pass work through state; {placeholders} read it back)</text>
+
+  <!-- Specialists -->
+  <text x="300" y="486" class="h">Specialist agents (used by the responder as AgentTools)</text>
+
+  <rect x="300" y="498" width="212" height="104" class="agent"/>
+  <text x="314" y="520" class="h">weather_agent</text>
+  <text x="314" y="540" class="t">get_lat_lon</text>
+  <text x="314" y="556" class="t">get_active_alerts (NWS)</text>
+  <text x="314" y="572" class="t">get_forecast (NWS, 3 days)</text>
+  <text x="314" y="592" class="s">U.S. locations</text>
+
+  <rect x="530" y="498" width="212" height="104" class="agent"/>
+  <text x="544" y="520" class="h">search_agent</text>
+  <text x="544" y="540" class="t">google_search (built-in)</text>
+  <text x="544" y="556" class="t">news · evacuation orders</text>
+  <text x="544" y="572" class="t">shelters · road closures</text>
+  <text x="544" y="592" class="s">single-tool agent (ADK rule)</text>
+
+  <rect x="760" y="498" width="212" height="104" class="agent"/>
+  <text x="774" y="520" class="h">routes_agent</text>
+  <text x="774" y="540" class="t">google_maps_lookup</text>
+  <text x="774" y="556" class="t">directions · travel time</text>
+  <text x="774" y="572" class="t">shelters / hospitals nearby</text>
+  <text x="774" y="592" class="s">Gemini Google Maps grounding</text>
+
+  <rect x="990" y="498" width="206" height="104" class="agent"/>
+  <text x="1004" y="520" class="h">qa_agent</text>
+  <text x="1004" y="540" class="t">no tools</text>
+  <text x="1004" y="556" class="t">go-bags · shelter in place</text>
+  <text x="1004" y="572" class="t">before / during / after</text>
+  <text x="1004" y="592" class="s">FEMA / Ready.gov guidance</text>
+
+  <!-- responder -> specialists -->
+  <path d="M450,392 L450,470 L406,470 L406,498" class="lineBlue"/>
+  <path d="M450,470 L636,470 L636,498" class="lineBlue"/>
+  <path d="M450,470 L866,470 L866,498" class="lineBlue"/>
+  <path d="M450,470 L1093,470 L1093,498" class="lineBlue"/>
+  <text x="458" y="466" class="lbl">AgentTool calls</text>
+
+  <!-- External services -->
+  <text x="24" y="664" class="h">External data &amp; models</text>
+
+  <rect x="24" y="676" width="224" height="60" class="ext"/>
+  <text x="38" y="697" class="h">Google Maps Geocoding API v4</text>
+  <text x="38" y="716" class="s">OAuth (project credentials) · Open-Meteo fallback</text>
+
+  <rect x="264" y="676" width="224" height="60" class="ext"/>
+  <text x="278" y="697" class="h">National Weather Service API</text>
+  <text x="278" y="716" class="s">api.weather.gov · alerts/active · forecast</text>
+
+  <rect x="504" y="676" width="224" height="60" class="ext"/>
+  <text x="518" y="697" class="h">Google Search grounding</text>
+  <text x="518" y="716" class="s">Gemini built-in tool (Vertex AI)</text>
+
+  <rect x="744" y="676" width="224" height="60" class="ext"/>
+  <text x="758" y="697" class="h">Google Maps grounding</text>
+  <text x="758" y="716" class="s">Gemini REST · groundingTypes: places + routing</text>
+
+  <rect x="984" y="676" width="232" height="60" class="ext"/>
+  <text x="998" y="697" class="h">Gemini on Vertex AI (global)</text>
+  <text x="998" y="716" class="s">3.8 Flash for agents · 3.5 Flash-Lite classifier</text>
+
+  <!-- links specialists -> external -->
+  <path d="M340,602 L136,676" class="lineExt"/>
+  <path d="M406,602 L376,676" class="lineExt"/>
+  <path d="M636,602 L616,676" class="lineExt"/>
+  <path d="M866,602 L856,676" class="lineExt"/>
+  <path d="M978,234 L1100,676" class="lineExt"/>
+
+  <!-- footer -->
+  <text x="24" y="770" class="s">Flow: user → readynow_root (validate + log) → answer_team → responder gathers facts via specialists → critic validates → refiner writes the final answer → user.</text>
+  <text x="24" y="790" class="s">Every agent carries the same before/after model callbacks, so logging covers all user-agent interactions and validation runs at the front door and on every hand-off.</text>
+</svg>
